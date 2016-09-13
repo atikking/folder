@@ -12,42 +12,78 @@ var Folder = function(){
         var root = root;
         //var source = ;
         const out = {
-            File: function (fileName) {
+            /**
+             *
+             * @param fileName
+             * @return {{copy: fileOut.copy, move: fileOut.move, rename: fileOut.rename, delete: fileOut.delete}}
+             * @constructor
+             */
+            file: function (fileName) {
                 var oldPath = path.resolve(root, fileName);
                 var oldDest = fs.createReadStream(oldPath);
 
                 const fileOut = {
+                    /**
+                     * Copy files into a folder
+                     * @param callback(err)
+                     * @return {{to: to}}
+                     */
                     copy: function (callback) {
                         return {
+                            /**
+                             * Into folder
+                             * @param newPath
+                             */
                             to: function (newPath) {
-                                out.newDir(newPath);// Create dir if not available
-                                var pathNew =  path.resolve(newPath, fileName);
-                                var dest = fs.createWriteStream(pathNew);
-                                oldDest.pipe(dest);
-                                oldDest.on('end', callback);
-                                oldDest.on('error', callback);
+                                out.newDir(newPath, function (err) {
+                                    if(err) return callback(err);
+
+                                    var pathNew =  path.resolve(newPath, fileName);
+                                    var dest = fs.createWriteStream(pathNew);
+                                    oldDest.pipe(dest);
+                                    oldDest.on('end', callback);
+                                    oldDest.on('error', callback);
+                                });// Create dir if not available
+
                             }
                         }
                     },
+
+                    /**
+                     * moves a file
+                     * @param callback(err)
+                     * @return {{to: to}}
+                     */
                     move: function (callback) {
                         return {
+                            /**
+                             * Copy into folder
+                             * @param newPath
+                             */
                             to: function (newPath) {
-                                out.newDir(newPath);
-                                var pathNew =  path.resolve(newPath, fileName);
+                                out.newDir(newPath, function (err) {
+                                    if(err) return callback(err);
 
-                                var dest = fs.createWriteStream(pathNew);
-                                oldDest.pipe(dest);
-                                oldDest.on('end', function () {
-                                    fileOut.delete();
-                                    if(typeof callback == 'function') callback();
-                                    oldDest = fs.createReadStream(pathNew);
+                                    var pathNew = path.resolve(newPath, fileName);
+                                    var dest = fs.createWriteStream(pathNew);
+                                    oldDest.pipe(dest);
+                                    oldDest.on('end', function () {
+                                        fileOut.delete();
+                                        if (typeof callback == 'function') callback();
+                                        oldDest = fs.createReadStream(pathNew);
+                                    });
+                                    oldDest.on('error', callback);
                                 });
-                                oldDest.on('error', callback);
-
                             }
                         }
                     },
-                    rename: function (newName) {
+
+                    /**
+                     * rename a file
+                     * @param newName
+                     * @param callback(err)
+                     */
+                    rename: function (newName, callback) {
 
                         var ext = "";
                         if (fileName.indexOf('.') > 0) { ext = '.' + fileName.split('.').slice(-1)[0]; }
@@ -56,31 +92,62 @@ var Folder = function(){
                         var newFilename = newName + ext;
                         var pathNew =  path.resolve(root, newFilename);
                         fs.rename(oldPath, pathNew, function(err){
-                            if (err) throw err;
-                            console.log('renamed complete');
+                            if(typeof callback == 'function'){
+                                if (err) callback(err);
+                                callback();
+                            }
                         });
                     },
-                    delete:function (){
-                        out.delete(oldPath);
+                    /**
+                     *
+                     */
+                    delete:function (callback){
+                        out.delete(oldPath, callback);
                     }
                 };
                 return fileOut;
             },
+            /**
+             * List item
+             * @param callback(err, files)
+             */
             list: function (callback) {
                 fs.readdir(root, function(err, files){
-                        if (err) throw err;
                     console.log(files);
-                    if (typeof callback == 'function') callback(err, files);
+                    if (typeof callback == 'function'){
+                        if (err) return callback(err);
+                        callback(err, files);
+                    }
                 });
             },
-            delete:function (file) {
+
+            /**
+             * Delete folder
+             * @param file
+             * @param callback
+             */
+            delete:function (file, callback) {
                 fs.unlink(file ? file : root, function(err){
-                        if (err) throw err;
-                    console.log('successfully deleted /tmp/hello');
+                    if(typeof callback == 'function'){
+                        if (err) callback(err);
+                        callback();
+                    }
+                    console.log('successfully deleted'+ file);
                 });
             },
-            newDir : function (path) {
-                mkdirp(path, function(err) { if (err) throw err; });
+
+            /**
+             *  Create new dir
+             * @param path
+             */
+            newDir : function (path, callback) {
+                mkdirp(path, function(err) {
+                    console.log("Creating dir"+path);
+                    if (typeof callback == 'function') {
+                        if (err) return callback(err);
+                        callback();
+                    }
+                });
             }
         }
         return out;
