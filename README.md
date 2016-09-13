@@ -1,2 +1,2 @@
 # folder
-a user friendly tool for copy, move rename and create folder 
+a user friendly tool to copy, move, rename or create folder or file 
