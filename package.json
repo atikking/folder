@@ -1,5 +1,5 @@
 {
-  "name": "linowis",
+  "name": "Folder",
   "version": "1.0.0",
   "description": "A tool for folder and file, it allows to copy, move and rename a folder",
   "main": "index.js",
