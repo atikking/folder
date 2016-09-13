@@ -1,7 +1,7 @@
 {
   "name": "Folder",
   "version": "1.0.0",
-  "description": "A tool for folder and file, it allows to copy, move and rename a folder",
+  "description": "A tool for folder and file, it allows to copy, move and rename a folder, also allows to listing the file items of a dir",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
