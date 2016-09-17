@@ -24,7 +24,7 @@ tool.folder("./").file("renamed.txt").delete(function(err){
 
 /**
 *
-*File renaming file example
+*File renaming example
 *
 tool.folder("./").file("test.txt").rename("renamed",function(err){
 	if(err) return console.log(err);
