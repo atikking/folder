@@ -1,7 +1,7 @@
 {
   "name": "lino-folder",
-  "version": "1.0.0",
-  "description": "A tool for folder and file, it allows to copy, move and rename a folder",
+  "version": "1.0.3",
+  "description": "A Directory Toolkit plugin for nodejs to copy, move, rename, create and delete file or folder, or listing the files of a folder",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,5 +11,9 @@
   "dependencies": {
     "mkdirp": "^0.5.1",
     "path": "^0.12.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atikking/folder.git"
   }
 }
